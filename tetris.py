@@ -185,7 +185,7 @@ def is_overlapped(xpos, ypos, turn):
 
 # 전역 변수
 pygame.init()
-pygame.key.set_repeat(30, 30)
+pygame.key.set_repeat(100,100)
 SURFACE = pygame.display.set_mode([600, 600])
 FPSCLOCK = pygame.time.Clock()
 WIDTH = 12
