@@ -82,10 +82,17 @@ def is_overlapped(xpos, ypos, turn): # 블록 충돌 판정
                     (FIELD[ypos + y_offset][xpos + x_offset] != 'B')): #빈칸아니면
                      return True  # 충돌
     return False # 충돌아님
-            
+
+def is_game_over():
+    filled = 0
+    for cell in FIELD[0]:
+        if cell != 'B':
+            filled += 1
+    return filled >2
+
 #전역 변수
 pygame.init()
-pygame.key.set_repeat(100,100) #delay 30, interval 30
+pygame.key.set_repeat(150,30) #delay 30, interval 30
 SURFACE = pygame.display.set_mode([600,600])
 FPSCLOCK =  pygame.time.Clock()
 WIDTH = 10 + 2
@@ -99,8 +106,14 @@ def main():
     score = 0
     if BLOCK is None:
         BLOCK = get_block()  # 랜덤 블럭 선택
-
+    
+    # 메세지
     smallfont = pygame.font.SysFont(None, 36)
+    largefont = pygame.font.SysFont(None, 72)
+    message_over = largefont.render("Game Over!!", True, (255,255,255))
+    message_rect = message_over.get_rect()
+    message_rect.center = (300,300)
+
 
     # 게임필드 박스 그리기
     for ypos in range(HEIGHT):
@@ -122,35 +135,39 @@ def main():
                 if key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()      
+        # 게임 오버 확인
+        if is_game_over():
+            SURFACE.blit(message_over, message_rect)
+        else: # 게임 오버 아니면
+        # 움직임 처리    
+            if key == K_UP or key == K_SPACE:
+                BLOCK.up()
+            elif key == K_RIGHT:
+                BLOCK.right()
+            elif key == K_LEFT:
+                BLOCK.left()
+            elif key == K_DOWN:
+                BLOCK.down() 
 
-        if key == K_UP:
-            BLOCK.up()
-        elif key == K_RIGHT:
-            BLOCK.right()
-        elif key == K_LEFT:
-            BLOCK.left()
-        elif key == K_DOWN:
-            BLOCK.down() 
+            # Draw FIELD
+            SURFACE.fill((0,0,0))
+            for ypos in range(HEIGHT):
+                for xpos in range(WIDTH):
+                    value = FIELD[ypos][xpos]
+                    pygame.draw.rect(SURFACE, COLORS[value],
+                                    (xpos*25 +25, ypos*25 +25,24,24))
 
-        # Draw FIELD
-        SURFACE.fill((0,0,0))
-        for ypos in range(HEIGHT):
-            for xpos in range(WIDTH):
-                value = FIELD[ypos][xpos]
-                pygame.draw.rect(SURFACE, COLORS[value],
-                                (xpos*25 +25, ypos*25 +25,24,24))
+            BLOCK.update()
+            BLOCK.draw() # 위에 랜덤으로 가져온 블럭 그리기
 
-        BLOCK.update()
-        BLOCK.draw() # 위에 랜덤으로 가져온 블럭 그리기
-
-        # 점수 나타내기
-        score_str = str(score).zfill(6)
-        score_image = smallfont.render(score_str, True, (180,180,180))
-        SURFACE.blit(score_image,(500,30))
+            # 점수 나타내기
+            score_str = str(score).zfill(6)
+            score_image = smallfont.render(score_str, True, (180,180,180))
+            SURFACE.blit(score_image,(500,30))
         
         
         
-        # 언제나 화면을 업데이트
+         # 언제나 화면을 업데이트
         pygame.display.update()
         FPSCLOCK.tick(FPS) #FPS 
 
