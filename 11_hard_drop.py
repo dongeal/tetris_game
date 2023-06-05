@@ -1,5 +1,5 @@
 import sys #프로그램 종료 함수 호출용
-from math import sqrt
+from math import sqrt, ceil
 import random
 
 import pygame
@@ -34,7 +34,7 @@ class Block:
     
         else:
             self.stop = self.stop +1
-            if self.stop > FPS *1:
+            if self.stop > FPS/DIFFICULT:
                 self.stop = 0
                 self.ypos =self.ypos+1
         return erased
@@ -98,7 +98,7 @@ def erase_line():
         if FIELD[ypos].count('B') == 0 and FIELD[ypos].count('W') == 2:
             erased +=1
             del FIELD[ypos]
-            new_line = ['B']*(WIDTH -2) #빈라인 그리기
+            new_line = ['B']*(WIDTH -2) #빈라인 그리기 []'W','B',.....,'W']
             new_line.insert(0,'W')
             new_line.append('W')
             
@@ -136,6 +136,7 @@ FIELD =[[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
 BLOCK = None
 BLOCK_QUEUE = list()
 FPS = 15
+DIFFICULT = 1
 
 def main():
     global BLOCK
@@ -199,6 +200,7 @@ def main():
             erased = BLOCK.update()
             if erased >0:
                 score += 2**erased
+                DIFFICULT = min(ceil(score/10), 15) # 점점 어렵게
             BLOCK.draw() # 위에 랜덤으로 가져온 블럭 그리기
 
             # 다움 불록세트 그리기
@@ -209,7 +211,7 @@ def main():
                     for xpos in range(next_block.size):
                         value = next_block.data[xpos+ypos*next_block.size]
                         pygame.draw.rect(SURFACE, COLORS[value],
-                                     (xpos*15+460, ypos*15+75*ymargin,15,15))
+                                     (xpos*15+460, ypos*15+75*ymargin,14,14))
 
             # 점수 나타내기
             score_str = str(score).zfill(6)
