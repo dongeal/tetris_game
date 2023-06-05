@@ -65,7 +65,7 @@ class Block:
             self.ypos = self.ypos+1
     
     def up(self):
-        if not is_overlapped(self.xpos-1, self.ypos, (self.turn+1)%4):
+        if not is_overlapped(self.xpos, self.ypos, (self.turn+1)%4):
             self.turn =(self.turn+1)%4
             self.data =self.type[self.turn]
 
