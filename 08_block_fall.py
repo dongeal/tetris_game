@@ -123,7 +123,7 @@ def main():
                     pygame.quit()
                     sys.exit()      
 
-        if key == K_UP:
+        if key == K_UP or key == K_SPACE:
             BLOCK.up()
         elif key == K_RIGHT:
             BLOCK.right()
@@ -133,7 +133,7 @@ def main():
             BLOCK.down() 
 
         # Draw FIELD
-        SURFACE.fill((0,0,0))
+        SURFACE.fill((50,50,50))
         for ypos in range(HEIGHT):
             for xpos in range(WIDTH):
                 value = FIELD[ypos][xpos]

@@ -16,7 +16,7 @@ WIDTH = 10 + 2
 HEIGHT = 20 + 1
 FIELD =[[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
 
-
+print(FIELD)
 def main():
     score = 0
     smallfont = pygame.font.SysFont(None, 36)

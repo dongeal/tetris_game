@@ -79,7 +79,7 @@ def main():
                     sys.exit()       
 
         # Draw FIELD
-        SURFACE.fill((0,0,0))
+        SURFACE.fill((100,100,100))
         for ypos in range(HEIGHT):
             for xpos in range(WIDTH):
                 value = FIELD[ypos][xpos]
