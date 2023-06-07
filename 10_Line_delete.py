@@ -20,6 +20,7 @@ class Block:
 
     def update(self):
         global BLOCK
+        erased = 0
         if is_overlapped(self.xpos,self.ypos+1, self.turn):
             for y_offset in range(self.size):
                 for x_offset in range(self.size):
@@ -28,14 +29,15 @@ class Block:
                          val =self.data[y_offset*self.size +x_offset]
                          if val !='B':
                             FIELD[self.ypos + y_offset][self.xpos + x_offset] = val
-            BLOCK = get_block()         
+            BLOCK = get_block()  
+            erased = erase_line()       
     
         else:
             self.stop = self.stop +1
             if self.stop > FPS *1:
                 self.stop = 0
                 self.ypos =self.ypos+1
-
+        return erased
 
     def draw(self):
         for index in range(len(self.data)):
@@ -72,6 +74,22 @@ def get_block(): # 무작위로 블록 반환
     block = Block(name)
     return block
 
+def erase_line():
+    erased = 0
+    ypos = HEIGHT -1
+    while ypos >=0 :
+        if FIELD[ypos].count('B') == 0 and FIELD[ypos].count('W') == 2:
+            erased +=1
+            del FIELD[ypos]
+            new_line = ['B']*(WIDTH -2) #빈라인 그리기
+            new_line.insert(0,'W')
+            new_line.append('W')
+            
+            FIELD.insert(0, new_line)
+        else:
+            ypos -= 1
+    return erased
+
 def is_overlapped(xpos, ypos, turn): # 블록 충돌 판정
     data = BLOCK.type[turn]
     for y_offset in range(BLOCK.size):
@@ -92,7 +110,7 @@ def is_game_over():
 
 #전역 변수
 pygame.init()
-pygame.key.set_repeat(150,30) #delay 30, interval 30
+pygame.key.set_repeat(300,300) #delay 30, interval 30
 SURFACE = pygame.display.set_mode([600,600])
 FPSCLOCK =  pygame.time.Clock()
 WIDTH = 10 + 2
@@ -149,24 +167,6 @@ def main():
             elif key == K_DOWN:
                 BLOCK.down() 
 
-<<<<<<< HEAD
-        if key == K_UP or key == K_SPACE:
-            BLOCK.up()
-        elif key == K_RIGHT:
-            BLOCK.right()
-        elif key == K_LEFT:
-            BLOCK.left()
-        elif key == K_DOWN:
-            BLOCK.down() 
-
-        # Draw FIELD
-        SURFACE.fill((0,0,0))
-        for ypos in range(HEIGHT):
-            for xpos in range(WIDTH):
-                value = FIELD[ypos][xpos]
-                pygame.draw.rect(SURFACE, COLORS[value],
-                                (xpos*25 +25, ypos*25 +25,24,24))
-=======
             # Draw FIELD
             SURFACE.fill((0,0,0))
             for ypos in range(HEIGHT):
@@ -175,9 +175,11 @@ def main():
                     pygame.draw.rect(SURFACE, COLORS[value],
                                     (xpos*25 +25, ypos*25 +25,24,24))
 
-            BLOCK.update()
+            # 줄지우기
+            erased = BLOCK.update()
+            if erased >0:
+                score += 2**erased
             BLOCK.draw() # 위에 랜덤으로 가져온 블럭 그리기
->>>>>>> 7afd7de4b8dafad01ee7c31db3db0a09ad8f73d9
 
             # 점수 나타내기
             score_str = str(score).zfill(6)
